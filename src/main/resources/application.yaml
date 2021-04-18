@@ -1,0 +1,31 @@
+server:
+  port: 9000
+  
+springdoc:
+  swagger-ui:
+    config-url: /swagger-config.json
+
+spring:
+  application:
+    name: API-GATEWAY   
+  cloud:  
+    gateway:
+      routes:
+      - id: USER-SERVICE
+        uri: lb://USER-SERVICE
+        predicates:
+        - Path=/users/**
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: UserCircuitBreaker
+            fallbackUri: forward:/user-fallback
+      - id: DEPARTMENT-SERVICE
+        uri: lb://DEPARTMENT-SERVICE
+        predicates:
+        - Path=/departments/**
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: DepartMentCircuitBreaker
+            fallbackUri: forward:/department-fallback
